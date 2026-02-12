@@ -23,3 +23,77 @@
 | xgboost | Extreme Gradient Boosting | 0.6928 | 0.7571 | 0.5070 | 0.5779 | 0.5335 | 0.3068 | 0.3131 | 0.020 |
 | dummy | Dummy Classifier | 0.6518 | 0.5000 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.009 |
 | svm | SVM - Linear Kernel | 0.5954 | 0.5914 | 0.3395 | 0.4090 | 0.2671 | 0.0720 | 0.0912 | 0.008 |
+
+---
+
+## MCP Server - PyCaret AutoML Service
+
+### วิธีการใช้งาน
+
+#### 1. เริ่มต้น Server
+
+```bash
+uv venv
+uv pip install -r requirements.txt
+fastmcp dev mcp_server.py
+```
+
+Server จะอยู่ในสถานะ listening รอรับคำสั่งจาก Claude
+
+#### 2. ตั้งค่า Claude Desktop
+
+สร้างไฟล์ `claude_desktop_config.json` ที่ `%APPDATA%/Claude/claude_desktop_config.json`
+
+```json
+{
+  "mcpServers": {
+    "pycaret-automl": {
+      "command": "fastmcp",
+      "args": ["dev", "mcp_server.py"],
+      "cwd": "C:\\Users\\Lenovo\\OneDrive\\Documents\\Programing\\MCP\\pycaret-mcp-server\\dstoolbox-wk08"
+    }
+  }
+}
+```
+
+### Tools ที่มีให้ใช้
+
+#### 1. save_dataset_from_text
+บันทึกข้อมูล CSV จากข้อความ
+- Input: filename, csv_content
+- Output: ข้อความยืนยันการบันทึก
+
+#### 2. run_auto_analysis (Main) ⭐
+วิเคราะห์ข้อมูลอัตโนมัติด้วย PyCaret
+- Input: file_path (default: student_depression_dataset.csv), target_column (default: Depression)
+- Output: Task Type, Best Model, Top 5 Leaderboard
+
+#### 3. save_best_model
+บันทึกโมเดลที่ดีที่สุดเป็น .pkl
+- Input: model_name
+- Output: ข้อความยืนยัน
+
+### Resources
+- local://datasets - แสดงรายชื่อไฟล์ CSV ทั้งหมด
+
+### ตัวอย่าง
+Claude: "วิเคราะห์ depression dataset"
+→ Server: โหลด → Auto-detect → เทรนโมเดล → ส่ง Leaderboard
+
+### Technical
+- Framework: FastMCP
+- ML: PyCaret 3.3.2
+- Auto-Detection: ตรวจสอบ Task Type เอง
+- Dynamic Encoding: One-Hot vs Label ตามข้อมูล
+
+### Troubleshooting
+| ปัญหา | วิธีแก้ |
+|-------|--------|
+| Missing 'tabulate' | uv add tabulate |
+| File not found | ตรวจสอบเส้นทางไฟล์ |
+| Server hung | ใช้ dataset เล็กกว่า |
+
+---
+Ready to use! 🚀
+
+
